@@ -15,8 +15,6 @@ export default class TableStickyHeaderPlugin extends Plugin {
     private cleanupFunctions: Map<HTMLTableElement, () => void> = new Map();
 
     async onload() {
-        this.addStyles();
-
         this.app.workspace.onLayoutReady(() => {
             this.processAllTables();
         });
@@ -47,75 +45,7 @@ export default class TableStickyHeaderPlugin extends Plugin {
         this.cleanupFunctions.forEach((cleanup) => cleanup());
         this.cleanupFunctions.clear();
         document.querySelectorAll('.tsh-clone-wrapper').forEach((el) => el.remove());
-        document.getElementById('table-sticky-header-styles')?.remove();
         this.mutationObserver?.disconnect();
-    }
-
-    private addStyles() {
-        const styleId = 'table-sticky-header-styles';
-        if (document.getElementById(styleId)) return;
-
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-            /* 克隆容器：固定在视口，裁剪多余内容 */
-            .tsh-clone-wrapper {
-                position: fixed;
-                z-index: 100;
-                overflow: hidden;
-                pointer-events: none;
-                display: none;
-                /* 白底 + 描边 + 阴影 */
-                background: var(--background-primary);
-                border: 1px solid var(--background-modifier-border);
-                border-top: none;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            }
-            
-            .tsh-clone-wrapper.tsh-visible {
-                display: block;
-            }
-            
-            /* 内部滚动层：用于同步水平滚动 */
-            .tsh-clone-scroller {
-                overflow: hidden;
-            }
-            
-            /* 克隆的表格：保持原样式，左对齐 */
-            .tsh-clone-wrapper table {
-                margin: 0 !important;
-                table-layout: fixed !important;
-                border-collapse: collapse !important;
-            }
-            
-            /* 表头单元格样式：白底 + 边框 + 间距 */
-            .tsh-clone-wrapper thead th,
-            .tsh-clone-wrapper thead td {
-                background: var(--background-primary) !important;
-                border: 1px solid var(--background-modifier-border) !important;
-                /* --- 间距参数，可手动修改 --- */
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-                padding-left: 10px !important;
-                padding-right: 10px !important;
-            }
-            
-            /* 只显示表头 */
-            .tsh-clone-wrapper tbody {
-                visibility: hidden;
-                height: 0;
-                line-height: 0;
-                overflow: hidden;
-            }
-            
-            .tsh-clone-wrapper tbody td {
-                padding: 0 !important;
-                border: none !important;
-                height: 0 !important;
-                line-height: 0 !important;
-            }
-        `;
-        document.head.appendChild(style);
     }
 
     private processAllTables() {
@@ -289,16 +219,20 @@ export default class TableStickyHeaderPlugin extends Plugin {
             if (targetTh[i]) {
                 const rect = (cell as HTMLElement).getBoundingClientRect();
                 const th = targetTh[i] as HTMLElement;
-                th.style.width = `${rect.width}px`;
-                th.style.minWidth = `${rect.width}px`;
-                th.style.maxWidth = `${rect.width}px`;
-                th.style.boxSizing = 'border-box';
+                th.setCssStyles({
+                    width: `${rect.width}px`,
+                    minWidth: `${rect.width}px`,
+                    maxWidth: `${rect.width}px`,
+                    boxSizing: 'border-box',
+                });
             }
         });
 
         // 同步表格总宽度
         const sourceRect = source.getBoundingClientRect();
-        target.style.width = `${sourceRect.width}px`;
-        target.style.minWidth = `${sourceRect.width}px`;
+        target.setCssStyles({
+            width: `${sourceRect.width}px`,
+            minWidth: `${sourceRect.width}px`,
+        });
     }
 }
