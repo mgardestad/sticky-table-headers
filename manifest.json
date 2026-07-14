@@ -1,0 +1,11 @@
+{
+	"id": "sticky-table-headers",
+	"name": "Sticky Table Headers",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Keeps table headers visible while you scroll through long tables, with support for multiple tables and horizontal scrolling.",
+	"author": "Yinno",
+	"authorUrl": "https://github.com/JWCzju",
+	"fundingUrl": "https://github.com/sponsors/JWCzju",
+	"isDesktopOnly": false
+}
