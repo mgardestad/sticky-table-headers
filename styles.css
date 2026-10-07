@@ -32,3 +32,12 @@
     background-color: var(--background-primary) !important;
     background-image: none !important;
 }
+
+/* Obsidian's live-preview table handles are cloned with the header but lose
+   their editor-scoped styling, showing up as stray dots. Hide them. */
+.tsh-clone-wrapper .table-col-drag-handle,
+.tsh-clone-wrapper .table-row-drag-handle,
+.tsh-clone-wrapper .table-col-btn,
+.tsh-clone-wrapper .table-row-btn {
+    display: none !important;
+}
